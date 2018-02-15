@@ -1,57 +1,56 @@
 import React, { Component } from 'react';
-import './App.css';
+import './index.css';
+
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    
     this.state = {
-      starwarsChars: []
-    };
+      userInput: '',
+      list: []
+    }
   }
-  componentDidMount() {
-    // feel free to research what this code is doing.
-    // At a high level we are calling an API to fetch some starwars data from the open web.
-    // We then take that data and resolve it our state.
-    fetch('https://swapi.co/api/people')
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        this.setState({ starwarsChars: data.results });
-      })
-      .catch(err => {
-        throw new Error(err);
-      });
+
+  changeUserInput(input){
+    this.setState({
+      userInput: input
+    }, ()=> console.log(input))
   }
-  render() {
-    const data =this.state.starwarsChars.map(character =>  
-       <div className="container"> 
-        <div className="character_card">
-          <p className="name">{character.name}</p>
-          <p className="height"><strong>Height: </strong>{character.height}</p>
-          <p className="hair_color"><strong>Hair Color: </strong>{character.hair_color}</p>
-          <p className="skin_color"><strong>Skin Color: </strong>{character.skin_color}</p>
-          <p className="birth"><strong>Date of Birth: </strong>{character.birth_year}</p>
-          <p className="gender"><strong>Gender: </strong>{character.gender}</p>
-          {/* <p className="homeworld"><strong>Homeworld: </strong>{character.homeworld}</p> */}
-          {/* <p className="films"><strong>Films: </strong>{character.films}</p> */}
-          {/* <p className="species"><strong>Species: </strong>{character.species}</p> */}
-          {/* <p className="vehicles"><strong>Vehicles: </strong>{character.vehicles}</p> */}
-          {/* <p className="starships"><strong>Starships: </strong>{character.starships}</p> */}
-          </div> 
+ 
+  addToList(input) {
+    let listArray = this.state.list;
+
+    listArray.push(input);
+
+    this.setState({
+      list: listArray,
+      userInput: ''
+    })
+  }
+  
+
+    render() {
+      return (
+        <div className="container">
+        <h1 className="title">Things To Do</h1>
+          <input 
+          className="input"
+          onChange = { (e)=> this.changeUserInput(e.target.value)}
+          value={this.state.userInput} 
+          type="text"
+          />
+          <button className="button" onClick={ ()=> this.addToList(this.state.userInput)}>Submit</button>
+        
+        <ul className="theList">
+          {this.state.list.map( (value) => <li className="li">{value}</li>)}
+        </ul>
+
         </div>
-        )
 
-    return (
-      <div className="App">
-        <h1 className="Header">React Wars</h1>
-        {data}
-
-      </div>
-    );
+      )
+    }
   }
-}
-
-
+  
 
 export default App;
