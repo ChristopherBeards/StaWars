@@ -1,56 +1,47 @@
 import React, { Component } from 'react';
-import './index.css';
-
+import axios from 'axios';
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
+import Characters from './components/Characters';
+import CharacterDetails from './components/CharacterDetails';
+import './App.css';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      userInput: '',
-      list: []
-    }
+  state = {
+    starwarsChars: [],
+  };
+
+  componentDidMount() {
+    axios
+      .get('https://swapi.co/api/people')
+      .then(response => {
+        this.setState({ starwarsChars: response.data.results });
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
   }
 
-  changeUserInput(input){
-    this.setState({
-      userInput: input
-    }, ()=> console.log(input))
-  }
- 
-  addToList(input) {
-    let listArray = this.state.list;
-
-    listArray.push(input);
-
-    this.setState({
-      list: listArray,
-      userInput: ''
-    })
-  }
-  
-
-    render() {
-      return (
-        <div className="container">
-        <h1 className="title">Things To Do</h1>
-          <input 
-          className="input"
-          onChange = { (e)=> this.changeUserInput(e.target.value)}
-          value={this.state.userInput} 
-          type="text"
+  render() {
+    return (
+      <Router>
+        <div>
+          <Route
+            exact
+            path="/"
+            component={() => (
+              <Characters starwarsChars={this.state.starwarsChars} />
+            )}
           />
-          <button className="button" onClick={ ()=> this.addToList(this.state.userInput)}>Submit</button>
-        
-        <ul className="theList">
-          {this.state.list.map( (value) => <li className="li">{value}</li>)}
-        </ul>
-
+          <Route
+            path="/:id"
+            component={(props) => (
+              <CharacterDetails {...props} starwarsChars={this.state.starwarsChars} />
+            )}
+          />
         </div>
-
-      )
-    }
+      </Router>
+    );
   }
-  
+}
 
 export default App;
